@@ -1,0 +1,58 @@
+@layout('layouts/main')
+
+@section('content')
+<div class="card">
+  <div class="card-title"></div>
+  <div class="card-body">
+    <form action="justDSP_PV" method="get">
+      {{ csrfField() }} 
+      <div class="form-group">
+        <label>確認站點名稱:</label>
+        <input type="text" name="site_name" class="form-control" value="{{site_name}}">
+      </div>
+      <div class="form-group">
+        <label>確認網站URL:</label>
+        <input type="text" name="site_url" class="form-control" value="{{site_url}}">
+      </div>
+      <div class="form-group">
+        <label>輸入事件數量(不含PV):</label>
+        <input type="number" name="eve_num" class="form-control" value="{{eve_num}}" readonly>
+      </div>
+      <div class="form-group">
+        <button type="submit" id="sendbtn" class="form-control btn btn-outline-success">
+          <i></i>送出
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+
+
+<script>
+  $(function () {
+
+    function calliframe() {
+      var sitename = $("input[name='site_name']").val();
+      $.ajax({
+        url: "http://localhost:3333/" + sitename + "/DSP/pageview.txt",
+        type: "GET",
+        success: function () {
+          $('.loding').remove();
+
+          $('<h1>pageview.txt</h1><iframe height="345px"  frameborder="1" src="http://localhost:3333/' + sitename +
+              '/DSP/pageview.txt" frameborder="0"></iframe>')
+            .insertAfter(".card");
+        },
+        error: function () {
+          $('.loding').remove();
+          $('<h1 class="loding">Now Loading... </h1>').insertAfter(".card");
+          setTimeout(calliframe, 500);
+        }
+      })
+    }
+    $("#sendbtn").click(calliframe);
+  })
+</script>
+
+@endsection
